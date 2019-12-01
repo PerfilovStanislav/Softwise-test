@@ -1,0 +1,83 @@
+version: "3.7"
+
+services:
+  nginx:
+    container_name: "test-nginx"
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    ports:
+      - "${DOCKER_NGINX_PORT}:80"
+    links:
+      - php-fpm
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - php-fpm
+    networks:
+      - test-network
+
+  php-fpm:
+    container_name: "test-php-fpm"
+    build:
+      context: .
+      dockerfile: docker/php-fpm/Dockerfile
+    volumes:
+      - ./:/var/www
+    links:
+      - mysql
+    depends_on:
+      - mysql
+    networks:
+      - test-network
+
+  mysql:
+    container_name: "test-mysql"
+    build:
+      context: .
+      dockerfile: docker/mysql/Dockerfile
+    ports:
+      - "${DOCKER_MYSQL_PORT}:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+    volumes:
+      - ./docker/data/mysql:/var/lib/mysql
+    networks:
+      - test-network
+
+  redis:
+    container_name: "test-redis"
+    image: redis:5.0.7-alpine
+    restart: always
+    ports:
+      - "${DOCKER_REDIS_PORT}:6379"
+    volumes:
+      - ./docker/data/redis:/data
+    networks:
+      - test-network
+
+
+  phpredisadmin:
+    image: erikdubbelboer/phpredisadmin:latest
+    ports:
+      - "8081:80"
+    environment:
+      - REDIS_1_HOST=redis
+      - REDIS_1_PORT=6379
+    networks:
+      - test-network
+
+#  redis:
+#    container_name: "test-redis"
+#    build:
+#      context: .
+#      dockerfile: docker/redis/Dockerfile
+#    ports:
+#      - "${DOCKER_REDIS_PORT}:6379"
+#    networks:
+#      - test-network
+
+networks:
+  test-network:
