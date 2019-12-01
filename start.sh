@@ -13,6 +13,11 @@ fi
 
 if [ ! -f .env ]; then
   cp .env.example .env
+  sudo chmod 0777 .env
 fi
 
-docker-compose up --build
+docker-compose -p $NETWORK up -d
+docker exec -it test-php-fpm composer install
+sudo chmod -R 0777 ./storage/ ./bootstrap/cache/ ./docker/ ./vendor/
+docker exec -it test-php-fpm php artisan key:generate
+docker exec -it test-php-fpm php artisan migrate

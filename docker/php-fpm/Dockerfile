@@ -2,8 +2,6 @@ FROM php:7.2-fpm
 
 COPY . /var/www
 
-#ADD docker/configs/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
-
 WORKDIR /var/www
 
 RUN apt-get update && apt-get install --assume-yes zlib1g-dev
@@ -19,4 +17,4 @@ RUN apt-get install unzip
 
 RUN curl -sL https://getcomposer.org/installer | php -- --install-dir /usr/bin --filename composer
 
-CMD composer install --working-dir=/var/www && php artisan key:generate && php artisan migrate && php-fpm
+CMD php-fpm

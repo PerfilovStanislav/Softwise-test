@@ -60,6 +60,7 @@ services:
 
 
   phpredisadmin:
+    container_name: "test-phpredisadmin"
     image: erikdubbelboer/phpredisadmin:latest
     ports:
       - "8081:80"
