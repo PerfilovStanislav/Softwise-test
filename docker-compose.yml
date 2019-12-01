@@ -69,15 +69,5 @@ services:
     networks:
       - test-network
 
-#  redis:
-#    container_name: "test-redis"
-#    build:
-#      context: .
-#      dockerfile: docker/redis/Dockerfile
-#    ports:
-#      - "${DOCKER_REDIS_PORT}:6379"
-#    networks:
-#      - test-network
-
 networks:
   test-network:
